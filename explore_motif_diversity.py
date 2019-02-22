@@ -30,5 +30,6 @@ for key in seq:
     sequence = str(seq[key])
     if re.search(regex,str(seq[key])) != None:
         fragment = re.findall(regex,str(seq[key]))[0]
-        print(key+'    '+fragment[-3:],file=ofile)
+        header = key.split('|')[1] #This line is to deal with raw uniprot ID :>tr|ID|annotations
+        print(header+'    '+fragment[-3:],file=ofile)
 ofile.close()
