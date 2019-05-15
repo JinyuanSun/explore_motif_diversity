@@ -1,0 +1,23 @@
+import argparse
+parser = argparse.ArgumentParser(description='extract fasta')
+parser.add_argument("-i", '--input', help="input a fasta file")
+parser.add_argument("-l", '--list', help="a list of headers")
+
+args = parser.parse_args()
+inf = open(args.input)
+lst = open(args.list)
+
+def readseq(fasta):# return a dict in which headers are keys and sequences are value
+    seq = {}
+    for line in fasta:
+        if line.startswith(">"):
+            name = line.replace('>','').split()[0]
+            seq[name] = ''
+        else:
+            seq[name]+=line.replace('\n','').strip()
+    return seq
+
+
+dic = readseq(inf)
+for line in lst:
+    print(">"+line+dic[line.replace("\n","")])
