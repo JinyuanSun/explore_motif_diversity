@@ -1,0 +1,25 @@
+#this is to create subfamilies in an EC number by pfam annotation
+import os
+def readseq(fasta):# return a dict in which headers are keys and sequences are value
+    seq = {}
+    for line in fasta:
+        if line.startswith(">"):
+            omg = line.replace('>','').split()[0][:-2]
+            seq[omg] = ''
+        else:
+            seq[omg]+=line.replace('\n','').strip()
+    return seq
+for path, dir_list, file_list in os.walk(os.getcwd()):
+    for file_name in file_list:
+        if file_name.endswith("fasta"):
+            bed = readseq(file_name)
+            #os.system("hmmscan --noali --cpu 50 --tblout "+file_name.replace("fasta","out")+" ~/interproscan/Pfam-A.hmm "+file_name)
+            os.system("awk '!x[$3]++' "+file_name.replace("fasta","out")+" > "+file_name.replace("fasta","o"))
+            os.system("awk -F "+'" " '+"'{print $2"+'"\\t"'+"$3}' "+file_name.replace("fasta","o")+" > "+file_name.replace("fasta","pf"))
+            pf = open(file_name.replace("fasta","pf"))
+            for line in pf:
+                if line.startswith("PF"):
+                    pfam = line.split("\t")[0].split(".")[0]
+                    ids = line.split("\t")[1]
+                    w = open(file_name.replace("fasta",pfam), "a+", encoding='UTF-8')
+                    print(bed.get(ids),end="",file=w)
